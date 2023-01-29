@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @RestController
-@RequestMapping
+@RequestMapping("/url")
 public class UrlController {
        private final UrlService urlService;
 
@@ -23,7 +23,7 @@ public class UrlController {
     }
 
     @PostMapping("/generateShortLink")
-    public ResponseEntity<?> generateShortUrl(ShortUrlRequest request){
+    public ResponseEntity<?> generateShortUrl(@RequestBody ShortUrlRequest request){
         try{
             var serviceResponse = urlService.generateShortUrl(request);
             return new ResponseEntity<>(serviceResponse, HttpStatus.CREATED);

@@ -39,7 +39,7 @@ public class UrlServiceImpl implements UrlService{
     @Override
     public String updateShortenedUrl(String shortenedUrl, String customUrl) throws UrlShortenerException {
         UrlDetails urlDetails = urlRepository.findUrlDetailsByShortenedUrl(shortenedUrl).orElseThrow(() -> new UrlShortenerException("Url details not found"));
-        if(!isValid(customUrl)){
+        if(isValid(customUrl)){
             throw new InvalidUrlFormatException("Invalid url format");
         }
         urlDetails.setShortenedUrl(customUrl);
@@ -75,6 +75,7 @@ public class UrlServiceImpl implements UrlService{
         return urlRepository.count();
     }
     private boolean isValid(String actualUrl) {
+
         String regex =  "((http|https)://)(www.)?"
                 + "[a-zA-Z0-9@:%._\\+~#?&//=]"
                 + "{2,256}\\.[a-z]"
@@ -82,11 +83,12 @@ public class UrlServiceImpl implements UrlService{
                 + "._\\+~#?&//=]*)";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(actualUrl);
-        return matcher.matches();
+        return !matcher.matches();
     }
 
     private String encodeUrl(String actualUrl) {
         LocalDateTime localDateTime = LocalDateTime.now();
         return Hashing.murmur3_32().hashString(actualUrl.concat(localDateTime.toString()), StandardCharsets.UTF_8).toString();
     }
+
 }
